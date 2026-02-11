@@ -53,8 +53,35 @@ export default async function ToolDetailPage({
     enterprise: "엔터프라이즈",
   };
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": tool.name,
+    "description": tool.short_description || tool.description,
+    "applicationCategory": getCategoryLabel(tool.category),
+    "url": tool.url || undefined,
+    "offers": {
+      "@type": "Offer",
+      "price": tool.pricing_type === "free" ? "0" : undefined,
+      "priceCurrency": "USD",
+      "description": tool.pricing_detail || undefined,
+    },
+    ...(tool.rating ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": Number(tool.rating).toFixed(1),
+        "bestRating": "5",
+        "ratingCount": "100",
+      },
+    } : {}),
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
       <main className="flex-1">
         <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6">

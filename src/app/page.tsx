@@ -19,8 +19,42 @@ export default async function HomePage({
   const counts: Record<string, number> = {};
   categories.forEach((c) => (counts[c.category] = c.count));
 
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AI AppPro",
+    "url": "https://ai-directory-seven.vercel.app",
+    "description": "소상공인과 중소기업을 위한 AI 도구 가이드. 카테고리별 AI 서비스 비교, 가격, 사용법, 대안까지 한눈에.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://ai-directory-seven.vercel.app?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  };
+
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "AI 도구 디렉토리",
+    "numberOfItems": tools.length,
+    "itemListElement": tools.slice(0, 10).map((tool, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "name": tool.name,
+      "url": `https://ai-directory-seven.vercel.app/tools/${tool.slug}`,
+    })),
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
+      />
       <Header />
       <main className="flex-1">
         {/* Hero */}
