@@ -31,6 +31,15 @@ export const POPULAR_COMPARISONS: [string, string][] = [
   ["tableau-ai", "power-bi-copilot"],
   ["heygen", "synthesia"],
   ["duolingo-max", "khanmigo"],
+  ["codeium", "github-copilot"],
+  ["cursor", "devin"],
+  ["quillbot", "wordtune"],
+  ["grammarly", "quillbot"],
+  ["fireflies-ai", "otter-ai"],
+  ["elevenlabs", "resemble-ai"],
+  ["chatbot-com", "voiceflow"],
+  ["akkio", "julius-ai"],
+  ["opus-clip", "runway"],
 ];
 
 export function canonicalComparisonSlug(slug1: string, slug2: string): string {
