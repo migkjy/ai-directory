@@ -88,3 +88,28 @@ export async function getAlternativeTools(
   );
   return rows;
 }
+
+export async function getTwoToolsBySlugs(
+  slug1: string,
+  slug2: string
+): Promise<[AiTool | null, AiTool | null]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE slug = ANY($1) AND published = true",
+    [[slug1, slug2]]
+  );
+  const tool1 = rows.find((r: AiTool) => r.slug === slug1) || null;
+  const tool2 = rows.find((r: AiTool) => r.slug === slug2) || null;
+  return [tool1, tool2];
+}
+
+export async function getToolsBySameCategory(
+  category: string,
+  excludeSlugs: string[],
+  limit: number = 4
+): Promise<AiTool[]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE category = $1 AND slug != ALL($2) AND published = true ORDER BY is_featured DESC, rating DESC NULLS LAST LIMIT $3",
+    [category, excludeSlugs, limit]
+  );
+  return rows;
+}

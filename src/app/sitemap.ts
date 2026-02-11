@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/db";
 import { CATEGORY_CONFIG } from "@/lib/categories";
+import { POPULAR_COMPARISONS, canonicalComparisonSlug } from "@/lib/comparisons";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://ai-directory.apppro.kr";
@@ -20,6 +21,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const comparePages = POPULAR_COMPARISONS.map(([a, b]) => ({
+    url: `${baseUrl}/compare/${canonicalComparisonSlug(a, b)}`,
+    lastModified: new Date(),
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
   return [
     {
       url: baseUrl,
@@ -33,7 +41,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/compare`,
+      lastModified: new Date(),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
     ...categoryPages,
+    ...comparePages,
     ...toolPages,
   ];
 }
