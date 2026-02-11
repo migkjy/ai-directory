@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import PageTracker from "@/components/PageTracker";
 
 export const metadata: Metadata = {
   title: {
@@ -36,7 +37,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className="bg-white text-gray-900 antialiased">{children}</body>
+      <body className="bg-white text-gray-900 antialiased">
+        <PageTracker />
+        {children}
+      </body>
     </html>
   );
 }
