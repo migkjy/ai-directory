@@ -1,9 +1,10 @@
 import Link from "next/link";
+import MobileNav from "@/components/MobileNav";
 
 export default function Header() {
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 backdrop-blur-sm">
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
         <Link href="/" className="flex items-center gap-2">
           <span className="text-2xl font-bold text-gray-900">
             AI <span className="text-blue-600">AppPro</span>
@@ -35,6 +36,7 @@ export default function Header() {
             도구 등록
           </Link>
         </nav>
+        <MobileNav />
       </div>
     </header>
   );

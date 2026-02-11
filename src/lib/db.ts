@@ -102,6 +102,30 @@ export async function getTwoToolsBySlugs(
   return [tool1, tool2];
 }
 
+export async function getFeaturedTools(limit: number = 6): Promise<AiTool[]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE published = true AND is_featured = true ORDER BY rating DESC NULLS LAST LIMIT $1",
+    [limit]
+  );
+  return rows;
+}
+
+export async function getStats(): Promise<{
+  totalTools: number;
+  totalCategories: number;
+}> {
+  const toolsRes = await pool.query(
+    "SELECT COUNT(*)::int as count FROM ai_tools WHERE published = true"
+  );
+  const catRes = await pool.query(
+    "SELECT COUNT(DISTINCT category)::int as count FROM ai_tools WHERE published = true"
+  );
+  return {
+    totalTools: toolsRes.rows[0].count,
+    totalCategories: catRes.rows[0].count,
+  };
+}
+
 export async function getToolsBySameCategory(
   category: string,
   excludeSlugs: string[],

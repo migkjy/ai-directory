@@ -2,10 +2,18 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getToolBySlug, getAllSlugs, getAlternativeTools } from "@/lib/db";
-import { getCategoryLabel, getCategoryColor, getCategoryIcon } from "@/lib/categories";
+import {
+  getCategoryLabel,
+  getCategoryColor,
+  getCategoryIcon,
+} from "@/lib/categories";
+import { canonicalComparisonSlug } from "@/lib/comparisons";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
+import ShareButtons from "@/components/ShareButtons";
+
+const BASE_URL = "https://ai-directory-seven.vercel.app";
 
 export const revalidate = 3600;
 
@@ -22,18 +30,55 @@ export async function generateMetadata({
   const { slug } = await params;
   const tool = await getToolBySlug(slug);
   if (!tool) return {};
+  const title = tool.meta_title || `${tool.name} - 가격, 사용법, 대안`;
+  const description =
+    tool.meta_description ||
+    `${tool.name}: ${tool.short_description || tool.description}. 가격 정보, 주요 기능, 대안 도구까지 AI AppPro에서 확인하세요.`;
+  const url = `${BASE_URL}/tools/${slug}`;
   return {
-    title: tool.meta_title || `${tool.name} - 가격, 사용법, 대안`,
-    description:
-      tool.meta_description ||
-      `${tool.name}: ${tool.short_description || tool.description}. 가격 정보, 주요 기능, 대안 도구까지 AI AppPro에서 확인하세요.`,
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
       title: `${tool.name} - AI AppPro`,
       description: tool.short_description || tool.description,
       type: "article",
+      url,
+      siteName: "AI AppPro",
+    },
+    twitter: {
+      card: "summary",
+      title: `${tool.name} - AI AppPro`,
+      description: tool.short_description || tool.description,
     },
   };
 }
+
+const PRICING_CONFIG: Record<
+  string,
+  { label: string; className: string; icon: string }
+> = {
+  free: {
+    label: "무료",
+    className: "bg-green-100 text-green-700 border-green-200",
+    icon: "✓",
+  },
+  freemium: {
+    label: "프리미엄 (무료+유료)",
+    className: "bg-blue-100 text-blue-700 border-blue-200",
+    icon: "◈",
+  },
+  paid: {
+    label: "유료",
+    className: "bg-orange-100 text-orange-700 border-orange-200",
+    icon: "$",
+  },
+  enterprise: {
+    label: "엔터프라이즈",
+    className: "bg-purple-100 text-purple-700 border-purple-200",
+    icon: "★",
+  },
+};
 
 export default async function ToolDetailPage({
   params,
@@ -45,35 +90,32 @@ export default async function ToolDetailPage({
   if (!tool) notFound();
 
   const alternatives = await getAlternativeTools(tool.alternatives || []);
-
-  const pricingLabel: Record<string, string> = {
-    free: "무료",
-    freemium: "프리미엄 (무료+유료)",
-    paid: "유료",
-    enterprise: "엔터프라이즈",
-  };
+  const pageUrl = `${BASE_URL}/tools/${slug}`;
+  const pricing = PRICING_CONFIG[tool.pricing_type] || PRICING_CONFIG.freemium;
 
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
-    "name": tool.name,
-    "description": tool.short_description || tool.description,
-    "applicationCategory": getCategoryLabel(tool.category),
-    "url": tool.url || undefined,
-    "offers": {
+    name: tool.name,
+    description: tool.short_description || tool.description,
+    applicationCategory: getCategoryLabel(tool.category),
+    url: tool.url || undefined,
+    offers: {
       "@type": "Offer",
-      "price": tool.pricing_type === "free" ? "0" : undefined,
-      "priceCurrency": "USD",
-      "description": tool.pricing_detail || undefined,
+      price: tool.pricing_type === "free" ? "0" : undefined,
+      priceCurrency: "USD",
+      description: tool.pricing_detail || undefined,
     },
-    ...(tool.rating ? {
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": Number(tool.rating).toFixed(1),
-        "bestRating": "5",
-        "ratingCount": "100",
-      },
-    } : {}),
+    ...(tool.rating
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: Number(tool.rating).toFixed(1),
+            bestRating: "5",
+            ratingCount: "100",
+          },
+        }
+      : {}),
   };
 
   return (
@@ -103,33 +145,41 @@ export default async function ToolDetailPage({
 
           {/* Tool Header */}
           <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 sm:p-8">
-            <div className="flex items-start gap-4">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 text-3xl">
-                {getCategoryIcon(tool.category)}
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
-                    {tool.name}
-                  </h1>
-                  {tool.is_featured && (
-                    <span className="rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
-                      추천
-                    </span>
-                  )}
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100 text-3xl">
+                  {getCategoryIcon(tool.category)}
                 </div>
-                <div className="mt-2 flex flex-wrap items-center gap-2">
-                  <span
-                    className={`inline-block rounded-md border px-2 py-0.5 text-xs ${getCategoryColor(tool.category)}`}
-                  >
-                    {getCategoryLabel(tool.category)}
-                  </span>
-                  {tool.rating && (
-                    <span className="text-sm text-gray-500">
-                      {"★".repeat(Math.round(tool.rating))}{" "}
-                      {Number(tool.rating).toFixed(1)}
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
+                      {tool.name}
+                    </h1>
+                    {tool.is_featured && (
+                      <span className="rounded-md bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-700">
+                        추천
+                      </span>
+                    )}
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <span
+                      className={`inline-block rounded-md border px-2 py-0.5 text-xs ${getCategoryColor(tool.category)}`}
+                    >
+                      {getCategoryLabel(tool.category)}
                     </span>
-                  )}
+                    <span
+                      className={`inline-flex items-center gap-1 rounded-md border px-2 py-0.5 text-xs font-medium ${pricing.className}`}
+                    >
+                      <span>{pricing.icon}</span>
+                      {pricing.label}
+                    </span>
+                    {tool.rating && (
+                      <span className="text-sm text-gray-500">
+                        {"★".repeat(Math.round(tool.rating))}{" "}
+                        {Number(tool.rating).toFixed(1)}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
@@ -138,16 +188,19 @@ export default async function ToolDetailPage({
               {tool.description}
             </p>
 
-            {tool.url && (
-              <a
-                href={tool.url}
-                target="_blank"
-                rel="noopener noreferrer nofollow"
-                className="mt-4 inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
-              >
-                공식 사이트 방문 &rarr;
-              </a>
-            )}
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              {tool.url && (
+                <a
+                  href={tool.url}
+                  target="_blank"
+                  rel="noopener noreferrer nofollow"
+                  className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-700"
+                >
+                  공식 사이트 방문 &rarr;
+                </a>
+              )}
+              <ShareButtons url={pageUrl} title={`${tool.name} - AI AppPro`} />
+            </div>
           </div>
 
           {/* Details Grid */}
@@ -157,11 +210,14 @@ export default async function ToolDetailPage({
               <h2 className="mb-3 text-lg font-semibold text-gray-900">
                 가격 정보
               </h2>
-              <p className="text-sm font-medium text-gray-700">
-                {pricingLabel[tool.pricing_type] || tool.pricing_type}
-              </p>
+              <div
+                className={`mb-3 inline-flex items-center gap-2 rounded-lg border px-3 py-1.5 text-sm font-medium ${pricing.className}`}
+              >
+                <span className="text-base">{pricing.icon}</span>
+                {pricing.label}
+              </div>
               {tool.pricing_detail && (
-                <p className="mt-2 text-sm text-gray-600">
+                <p className="text-sm leading-relaxed text-gray-600">
                   {tool.pricing_detail}
                 </p>
               )}
@@ -191,17 +247,16 @@ export default async function ToolDetailPage({
           {/* Tags */}
           {tool.tags && tool.tags.length > 0 && (
             <div className="mb-8">
-              <h2 className="mb-3 text-lg font-semibold text-gray-900">
-                태그
-              </h2>
+              <h2 className="mb-3 text-lg font-semibold text-gray-900">태그</h2>
               <div className="flex flex-wrap gap-2">
                 {tool.tags.map((tag) => (
-                  <span
+                  <Link
                     key={tag}
-                    className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600"
+                    href={`/?q=${encodeURIComponent(tag)}`}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
                   >
                     {tag}
-                  </span>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -216,6 +271,19 @@ export default async function ToolDetailPage({
               <div className="grid gap-4 sm:grid-cols-2">
                 {alternatives.map((alt) => (
                   <ToolCard key={alt.id} tool={alt} />
+                ))}
+              </div>
+              {/* Comparison Links */}
+              <div className="mt-4 flex flex-wrap gap-2">
+                {alternatives.map((alt) => (
+                  <Link
+                    key={alt.slug}
+                    href={`/compare/${canonicalComparisonSlug(tool.slug, alt.slug)}`}
+                    className="inline-flex items-center gap-1 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-600"
+                  >
+                    {tool.name} vs {alt.name}
+                    <span className="text-gray-400">&rarr;</span>
+                  </Link>
                 ))}
               </div>
             </div>
