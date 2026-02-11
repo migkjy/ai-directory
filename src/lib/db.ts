@@ -1,0 +1,90 @@
+import { Pool } from "@neondatabase/serverless";
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
+
+export interface AiTool {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  short_description: string | null;
+  category: string;
+  subcategory: string | null;
+  tags: string[];
+  pricing_type: string;
+  pricing_detail: string | null;
+  url: string | null;
+  image_url: string | null;
+  features: string[];
+  alternatives: string[];
+  rating: number | null;
+  is_featured: boolean;
+  published: boolean;
+  meta_title: string | null;
+  meta_description: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function getAllTools(): Promise<AiTool[]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE published = true ORDER BY is_featured DESC, name ASC"
+  );
+  return rows;
+}
+
+export async function getToolBySlug(slug: string): Promise<AiTool | null> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE slug = $1 AND published = true",
+    [slug]
+  );
+  return rows[0] || null;
+}
+
+export async function getToolsByCategory(category: string): Promise<AiTool[]> {
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE category = $1 AND published = true ORDER BY is_featured DESC, name ASC",
+    [category]
+  );
+  return rows;
+}
+
+export async function getCategories(): Promise<
+  { category: string; count: number }[]
+> {
+  const { rows } = await pool.query(
+    "SELECT category, COUNT(*)::int as count FROM ai_tools WHERE published = true GROUP BY category ORDER BY count DESC"
+  );
+  return rows;
+}
+
+export async function searchTools(query: string): Promise<AiTool[]> {
+  const { rows } = await pool.query(
+    `SELECT * FROM ai_tools WHERE published = true AND (
+      name ILIKE $1 OR description ILIKE $1 OR short_description ILIKE $1
+      OR category ILIKE $1 OR $2 = ANY(tags)
+    ) ORDER BY is_featured DESC, name ASC`,
+    [`%${query}%`, query.toLowerCase()]
+  );
+  return rows;
+}
+
+export async function getAllSlugs(): Promise<string[]> {
+  const { rows } = await pool.query(
+    "SELECT slug FROM ai_tools WHERE published = true"
+  );
+  return rows.map((r: { slug: string }) => r.slug);
+}
+
+export async function getAlternativeTools(
+  alternativeSlugs: string[]
+): Promise<AiTool[]> {
+  if (alternativeSlugs.length === 0) return [];
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE slug = ANY($1) AND published = true",
+    [alternativeSlugs]
+  );
+  return rows;
+}

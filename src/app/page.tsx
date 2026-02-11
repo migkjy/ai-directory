@@ -1,0 +1,70 @@
+import { getAllTools, getCategories, searchTools } from "@/lib/db";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import ToolCard from "@/components/ToolCard";
+import SearchBar from "@/components/SearchBar";
+import CategoryGrid from "@/components/CategoryGrid";
+
+export const revalidate = 3600;
+
+export default async function HomePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
+  const { q } = await searchParams;
+  const tools = q ? await searchTools(q) : await getAllTools();
+  const categories = await getCategories();
+  const counts: Record<string, number> = {};
+  categories.forEach((c) => (counts[c.category] = c.count));
+
+  return (
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex-1">
+        {/* Hero */}
+        <section className="bg-gradient-to-b from-blue-50 to-white px-4 py-16 text-center">
+          <h1 className="mb-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            비즈니스에 딱 맞는 <span className="text-blue-600">AI 도구</span>를
+            찾아보세요
+          </h1>
+          <p className="mx-auto mb-8 max-w-2xl text-gray-600">
+            소상공인과 중소기업을 위한 AI 서비스 가이드. 카테고리별 비교, 가격,
+            사용법까지 한눈에 확인하세요.
+          </p>
+          <div className="flex justify-center">
+            <SearchBar />
+          </div>
+        </section>
+
+        {/* Categories */}
+        <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+          <h2 className="mb-6 text-xl font-bold text-gray-900">카테고리</h2>
+          <CategoryGrid counts={counts} />
+        </section>
+
+        {/* Tools Grid */}
+        <section className="mx-auto max-w-7xl px-4 pb-16 sm:px-6">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-xl font-bold text-gray-900">
+              {q ? `"${q}" 검색 결과` : "전체 AI 도구"}
+            </h2>
+            <span className="text-sm text-gray-500">{tools.length}개 도구</span>
+          </div>
+          {tools.length === 0 ? (
+            <div className="rounded-xl border border-gray-200 bg-gray-50 py-16 text-center">
+              <p className="text-gray-500">검색 결과가 없습니다.</p>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {tools.map((tool) => (
+                <ToolCard key={tool.id} tool={tool} />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+      <Footer />
+    </div>
+  );
+}
