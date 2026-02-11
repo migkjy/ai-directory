@@ -65,6 +65,25 @@ export default async function HomePage({
           )}
         </section>
 
+        {/* Blog Cross-link */}
+        <section className="mx-auto max-w-7xl px-4 pb-8 sm:px-6">
+          <div className="rounded-xl border border-indigo-200 bg-indigo-50 p-6 text-center">
+            <h2 className="text-lg font-bold text-gray-900 mb-2">AI 활용 블로그</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              AI 활용 가이드와 최신 트렌드를 블로그에서 확인하세요.
+              소상공인을 위한 실전 AI 사용법을 알려드립니다.
+            </p>
+            <a
+              href="https://content-pipeline-sage.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 transition-colors"
+            >
+              블로그 바로가기 &rarr;
+            </a>
+          </div>
+        </section>
+
         {/* Newsletter */}
         <section className="mx-auto max-w-7xl px-4 sm:px-6">
           <NewsletterSignup />

@@ -13,9 +13,19 @@ export default function Footer() {
               소상공인과 중소기업을 위한 AI 도구 가이드
             </p>
           </div>
-          <p className="text-sm text-gray-400">
-            &copy; {new Date().getFullYear()} AI AppPro. All rights reserved.
-          </p>
+          <div className="flex flex-col items-center gap-2 sm:items-end">
+            <a
+              href="https://content-pipeline-sage.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-blue-600 hover:text-blue-700 hover:underline transition-colors"
+            >
+              AI 블로그 &mdash; 활용 가이드 &amp; 최신 트렌드 &rarr;
+            </a>
+            <p className="text-sm text-gray-400">
+              &copy; {new Date().getFullYear()} AI AppPro. All rights reserved.
+            </p>
+          </div>
         </div>
       </div>
     </footer>
