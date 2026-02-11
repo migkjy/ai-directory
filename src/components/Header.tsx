@@ -22,6 +22,12 @@ export default function Header() {
           >
             카테고리
           </Link>
+          <Link
+            href="/submit"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            도구 등록
+          </Link>
         </nav>
       </div>
     </header>

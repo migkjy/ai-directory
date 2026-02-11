@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
 import SearchBar from "@/components/SearchBar";
 import CategoryGrid from "@/components/CategoryGrid";
+import NewsletterSignup from "@/components/NewsletterSignup";
 
 export const revalidate = 3600;
 
@@ -62,6 +63,11 @@ export default async function HomePage({
               ))}
             </div>
           )}
+        </section>
+
+        {/* Newsletter */}
+        <section className="mx-auto max-w-7xl px-4 sm:px-6">
+          <NewsletterSignup />
         </section>
       </main>
       <Footer />
