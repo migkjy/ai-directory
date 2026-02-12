@@ -35,6 +35,39 @@ export async function getAllTools(): Promise<AiTool[]> {
   return rows;
 }
 
+export async function getToolsPaginated(
+  offset: number = 0,
+  limit: number = 30,
+  category?: string,
+): Promise<AiTool[]> {
+  if (category) {
+    const { rows } = await pool.query(
+      "SELECT * FROM ai_tools WHERE published = true AND category = $1 ORDER BY is_featured DESC, name ASC LIMIT $2 OFFSET $3",
+      [category, limit, offset],
+    );
+    return rows;
+  }
+  const { rows } = await pool.query(
+    "SELECT * FROM ai_tools WHERE published = true ORDER BY is_featured DESC, name ASC LIMIT $1 OFFSET $2",
+    [limit, offset],
+  );
+  return rows;
+}
+
+export async function getToolsCount(category?: string): Promise<number> {
+  if (category) {
+    const { rows } = await pool.query(
+      "SELECT COUNT(*)::int as count FROM ai_tools WHERE published = true AND category = $1",
+      [category],
+    );
+    return rows[0].count;
+  }
+  const { rows } = await pool.query(
+    "SELECT COUNT(*)::int as count FROM ai_tools WHERE published = true",
+  );
+  return rows[0].count;
+}
+
 export async function getToolBySlug(slug: string): Promise<AiTool | null> {
   const { rows } = await pool.query(
     "SELECT * FROM ai_tools WHERE slug = $1 AND published = true",

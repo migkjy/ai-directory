@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getAllTools, getCategories, searchTools, getFeaturedTools, getStats } from "@/lib/db";
+import { getCategories, searchTools, getToolsPaginated, getToolsCount, getFeaturedTools, getStats } from "@/lib/db";
 import { getLatestIdeas } from "@/lib/ideas-db";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -7,6 +7,7 @@ import ToolCard from "@/components/ToolCard";
 import SearchBar from "@/components/SearchBar";
 import CategoryGrid from "@/components/CategoryGrid";
 import NewsletterSignup from "@/components/NewsletterSignup";
+import LoadMoreTools from "@/components/LoadMoreTools";
 
 export const revalidate = 3600;
 
@@ -15,13 +16,15 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{ q?: string }>;
 }) {
+  const PAGE_SIZE = 30;
   const { q } = await searchParams;
-  const tools = q ? await searchTools(q) : await getAllTools();
   const categories = await getCategories();
   const counts: Record<string, number> = {};
   categories.forEach((c) => (counts[c.category] = c.count));
 
-  const [featured, stats, latestIdeas] = await Promise.all([
+  const [tools, totalCount, featured, stats, latestIdeas] = await Promise.all([
+    q ? searchTools(q) : getToolsPaginated(0, PAGE_SIZE),
+    q ? searchTools(q).then((t) => t.length) : getToolsCount(),
     getFeaturedTools(6),
     getStats(),
     getLatestIdeas(3),
@@ -194,19 +197,25 @@ export default async function HomePage({
               {q ? `"${q}" 검색 결과` : "전체 AI 도구"}
             </h2>
             <span className="text-sm text-gray-500">
-              {tools.length}개 도구
+              {totalCount}개 도구
             </span>
           </div>
           {tools.length === 0 ? (
             <div className="rounded-xl border border-gray-200 bg-gray-50 py-16 text-center">
               <p className="text-gray-500">검색 결과가 없습니다.</p>
             </div>
-          ) : (
+          ) : q ? (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {tools.map((tool) => (
                 <ToolCard key={tool.id} tool={tool} />
               ))}
             </div>
+          ) : (
+            <LoadMoreTools
+              initialTools={tools}
+              totalCount={totalCount}
+              pageSize={PAGE_SIZE}
+            />
           )}
         </section>
 
