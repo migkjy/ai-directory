@@ -15,6 +15,7 @@ import {
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
+import { getToolBlogLinks, getCompareBlogLinks } from "@/lib/blog-links";
 
 export const revalidate = 3600;
 
@@ -95,6 +96,12 @@ export default async function ComparePage({
 
   const [tool1, tool2] = await getTwoToolsBySlugs(parsed[0], parsed[1]);
   if (!tool1 || !tool2) notFound();
+
+  const blogLinks = [
+    ...getCompareBlogLinks(slug),
+    ...getToolBlogLinks(parsed[0]),
+    ...getToolBlogLinks(parsed[1]),
+  ].filter((link, i, arr) => arr.findIndex((l) => l.slug === link.slug) === i);
 
   const relatedTools = await getToolsBySameCategory(
     tool1.category === tool2.category ? tool1.category : tool1.category,
@@ -399,6 +406,38 @@ export default async function ComparePage({
               <div className="grid gap-4 sm:grid-cols-2">
                 {relatedTools.map((tool) => (
                   <ToolCard key={tool.id} tool={tool} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Related Blog Posts */}
+          {blogLinks.length > 0 && (
+            <div className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
+                관련 블로그 글
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {blogLinks.map((link) => (
+                  <a
+                    key={link.slug}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-blue-300 hover:bg-blue-50"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                      &#128214;
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-blue-700">
+                        {link.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        AI AppPro 블로그 &rarr;
+                      </p>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>

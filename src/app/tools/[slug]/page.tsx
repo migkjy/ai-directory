@@ -12,6 +12,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
 import ShareButtons from "@/components/ShareButtons";
+import { getToolBlogLinks } from "@/lib/blog-links";
 
 const BASE_URL = "https://ai-directory-seven.vercel.app";
 
@@ -90,6 +91,7 @@ export default async function ToolDetailPage({
   if (!tool) notFound();
 
   const alternatives = await getAlternativeTools(tool.alternatives || []);
+  const blogLinks = getToolBlogLinks(slug);
   const pageUrl = `${BASE_URL}/tools/${slug}`;
   const pricing = PRICING_CONFIG[tool.pricing_type] || PRICING_CONFIG.freemium;
 
@@ -284,6 +286,37 @@ export default async function ToolDetailPage({
                     {tool.name} vs {alt.name}
                     <span className="text-gray-400">&rarr;</span>
                   </Link>
+                ))}
+              </div>
+            </div>
+          )}
+          {/* Related Blog Posts */}
+          {blogLinks.length > 0 && (
+            <div className="mb-8">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
+                관련 블로그 글
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {blogLinks.map((link) => (
+                  <a
+                    key={link.slug}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-3 rounded-xl border border-gray-200 bg-white p-4 transition-colors hover:border-blue-300 hover:bg-blue-50"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-100 text-blue-600">
+                      &#128214;
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-blue-700">
+                        {link.title}
+                      </p>
+                      <p className="mt-0.5 text-xs text-gray-500">
+                        AI AppPro 블로그 &rarr;
+                      </p>
+                    </div>
+                  </a>
                 ))}
               </div>
             </div>

@@ -4,7 +4,7 @@ import { CATEGORY_CONFIG } from "@/lib/categories";
 import { POPULAR_COMPARISONS, canonicalComparisonSlug } from "@/lib/comparisons";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = "https://ai-directory.apppro.kr";
+  const baseUrl = "https://ai-directory-seven.vercel.app";
   const slugs = await getAllSlugs();
 
   const toolPages = slugs.map((slug) => ({
@@ -46,6 +46,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/submit`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.5,
     },
     ...categoryPages,
     ...comparePages,
