@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { getAllTools, getCategories, searchTools, getFeaturedTools, getStats } from "@/lib/db";
+import { getLatestIdeas } from "@/lib/ideas-db";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
@@ -19,9 +21,10 @@ export default async function HomePage({
   const counts: Record<string, number> = {};
   categories.forEach((c) => (counts[c.category] = c.count));
 
-  const [featured, stats] = await Promise.all([
+  const [featured, stats, latestIdeas] = await Promise.all([
     getFeaturedTools(6),
     getStats(),
+    getLatestIdeas(3),
   ]);
 
   const websiteJsonLd = {
@@ -30,7 +33,7 @@ export default async function HomePage({
     "name": "AI AppPro",
     "url": "https://ai-directory-seven.vercel.app",
     "description":
-      "소상공인과 중소기업을 위한 AI 도구 가이드. 카테고리별 AI 서비스 비교, 가격, 사용법, 대안까지 한눈에.",
+      "매일 1건 AI SaaS 비즈니스 아이디어 리포트. 글로벌 AI 서비스 분석과 마이크로 SaaS 기회.",
     "potentialAction": {
       "@type": "SearchAction",
       "target":
@@ -64,44 +67,100 @@ export default async function HomePage({
       />
       <Header />
       <main className="flex-1">
-        {/* Hero */}
-        <section className="bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 px-4 py-20 text-center text-white">
+        {/* Hero - AI SaaS Idea Bank */}
+        <section className="bg-gradient-to-br from-violet-600 via-purple-700 to-indigo-800 px-4 py-20 text-center text-white">
           <div className="mx-auto max-w-3xl">
-            <p className="mb-3 text-sm font-medium uppercase tracking-widest text-blue-200">
-              AI 도구 디렉토리
+            <p className="mb-3 text-sm font-medium uppercase tracking-widest text-purple-200">
+              AI SaaS 아이디어 뱅크
             </p>
             <h1 className="mb-4 text-4xl font-extrabold leading-tight sm:text-5xl">
-              비즈니스에 딱 맞는
+              매일 1건, AI 비즈니스
               <br />
-              AI 도구를 찾아보세요
+              아이디어 상세 리포트
             </h1>
-            <p className="mx-auto mb-8 max-w-xl text-lg text-blue-100">
-              소상공인과 중소기업을 위한 AI 서비스 가이드.
+            <p className="mx-auto mb-8 max-w-xl text-lg text-purple-100">
+              글로벌 AI 서비스를 분석하고, 새로운 마이크로 SaaS 기회를 발견하세요.
               <br className="hidden sm:block" />
-              카테고리별 비교, 가격, 사용법까지 한눈에 확인하세요.
+              아이디어 분석, 수익 모델, 기술 스택까지 한눈에.
             </p>
-            <div className="flex justify-center">
-              <SearchBar />
+            <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+              <Link
+                href="/ideas"
+                className="rounded-lg bg-white px-8 py-3.5 text-sm font-bold text-purple-700 shadow-lg transition-colors hover:bg-purple-50"
+              >
+                아이디어 리포트 보기
+              </Link>
+              <div className="flex justify-center">
+                <SearchBar />
+              </div>
             </div>
             {/* Stats */}
             <div className="mt-10 flex items-center justify-center gap-8 sm:gap-16">
               <div>
-                <p className="text-3xl font-bold">{stats.totalTools}+</p>
-                <p className="text-sm text-blue-200">AI 도구</p>
+                <p className="text-3xl font-bold">{latestIdeas.length}+</p>
+                <p className="text-sm text-purple-200">아이디어 리포트</p>
               </div>
-              <div className="h-10 w-px bg-blue-400/40" />
+              <div className="h-10 w-px bg-purple-400/40" />
+              <div>
+                <p className="text-3xl font-bold">{stats.totalTools}+</p>
+                <p className="text-sm text-purple-200">AI 도구 분석</p>
+              </div>
+              <div className="h-10 w-px bg-purple-400/40" />
               <div>
                 <p className="text-3xl font-bold">{stats.totalCategories}</p>
-                <p className="text-sm text-blue-200">카테고리</p>
-              </div>
-              <div className="h-10 w-px bg-blue-400/40" />
-              <div>
-                <p className="text-3xl font-bold">100%</p>
-                <p className="text-sm text-blue-200">무료 이용</p>
+                <p className="text-sm text-purple-200">카테고리</p>
               </div>
             </div>
           </div>
         </section>
+
+        {/* Latest Idea Reports */}
+        {!q && latestIdeas.length > 0 && (
+          <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">
+                <span className="mr-2 inline-block rounded-md bg-purple-100 px-2 py-0.5 text-sm font-medium text-purple-700">
+                  NEW
+                </span>
+                최신 아이디어 리포트
+              </h2>
+              <Link
+                href="/ideas"
+                className="text-sm font-medium text-purple-600 hover:text-purple-700"
+              >
+                전체 보기 &rarr;
+              </Link>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {latestIdeas.map((idea) => (
+                <Link key={idea.id} href={`/ideas/${idea.slug}`}>
+                  <div className="group rounded-xl border border-gray-200 bg-white p-5 transition-all hover:border-purple-300 hover:shadow-md">
+                    <div className="mb-3 flex items-center gap-2">
+                      <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-700">
+                        {idea.category}
+                      </span>
+                      {idea.difficulty && (
+                        <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-600">
+                          {idea.difficulty}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="mb-2 text-base font-bold text-gray-900 group-hover:text-purple-700">
+                      {idea.title}
+                    </h3>
+                    <p className="mb-3 line-clamp-2 text-sm text-gray-500">
+                      {idea.summary}
+                    </p>
+                    <div className="flex items-center justify-between text-xs text-gray-400">
+                      <span>{idea.revenue_model}</span>
+                      <span>{new Date(idea.published_at).toLocaleDateString("ko-KR")}</span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Featured Tools */}
         {!q && featured.length > 0 && (

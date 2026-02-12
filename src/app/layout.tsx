@@ -6,45 +6,47 @@ import GoogleAnalytics from "@/components/GoogleAnalytics";
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai-directory-seven.vercel.app"),
   title: {
-    default: "AI AppPro - 한국 최고의 AI 도구 디렉토리",
+    default: "AI AppPro - AI SaaS 아이디어 뱅크 | 매일 새로운 AI 비즈니스 아이디어",
     template: "%s | AI AppPro",
   },
   description:
-    "소상공인과 중소기업을 위한 AI 도구 가이드. 카테고리별 AI 서비스 비교, 가격, 사용법, 대안까지 한눈에.",
+    "매일 1건 AI SaaS 비즈니스 아이디어 상세 리포트. 글로벌 AI 서비스 분석, 수익 모델, 마이크로 SaaS 기회를 발견하세요. AI 도구 디렉토리 포함.",
   keywords: [
+    "AI SaaS 아이디어",
+    "AI 비즈니스",
+    "마이크로 SaaS",
     "AI 도구",
-    "인공지능 서비스",
-    "AI 추천",
+    "AI 서비스 분석",
+    "AI 창업 아이디어",
     "소상공인 AI",
-    "중소기업 AI",
     "AI 디렉토리",
-    "AI 도구 비교",
+    "AI 수익 모델",
   ],
   alternates: {
     canonical: "https://ai-directory-seven.vercel.app",
   },
   openGraph: {
-    title: "AI AppPro - 한국 최고의 AI 도구 디렉토리",
+    title: "AI AppPro - AI SaaS 아이디어 뱅크",
     description:
-      "소상공인과 중소기업을 위한 AI 도구 가이드. 카테고리별 AI 서비스 비교.",
+      "매일 1건 AI 비즈니스 아이디어 리포트. 글로벌 AI 서비스 분석과 마이크로 SaaS 기회.",
     type: "website",
     locale: "ko_KR",
     siteName: "AI AppPro",
     url: "https://ai-directory-seven.vercel.app",
     images: [
       {
-        url: "/og?title=AI+AppPro&description=%ED%95%9C%EA%B5%AD+%EC%B5%9C%EA%B3%A0%EC%9D%98+AI+%EB%8F%84%EA%B5%AC+%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC",
+        url: "/og?title=AI+AppPro&description=AI+SaaS+%EC%95%84%EC%9D%B4%EB%94%94%EC%96%B4+%EB%B1%85%ED%81%AC",
         width: 1200,
         height: 630,
-        alt: "AI AppPro - 한국 최고의 AI 도구 디렉토리",
+        alt: "AI AppPro - AI SaaS 아이디어 뱅크",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI AppPro - 한국 최고의 AI 도구 디렉토리",
+    title: "AI AppPro - AI SaaS 아이디어 뱅크",
     description:
-      "소상공인과 중소기업을 위한 AI 도구 가이드. 카테고리별 AI 서비스 비교.",
+      "매일 1건 AI 비즈니스 아이디어 리포트. 글로벌 AI 서비스 분석과 마이크로 SaaS 기회.",
   },
   robots: {
     index: true,
@@ -63,7 +65,7 @@ export default function RootLayout({
         <link
           rel="alternate"
           type="application/rss+xml"
-          title="AI AppPro - AI 도구 디렉토리"
+          title="AI AppPro - AI SaaS 아이디어 뱅크"
           href="/feed.xml"
         />
       </head>

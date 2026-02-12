@@ -12,16 +12,16 @@ export default function Header() {
         </Link>
         <nav className="hidden items-center gap-6 sm:flex">
           <Link
-            href="/"
-            className="text-sm font-medium text-gray-600 hover:text-gray-900"
+            href="/ideas"
+            className="text-sm font-semibold text-purple-600 hover:text-purple-700"
           >
-            홈
+            아이디어 뱅크
           </Link>
           <Link
             href="/category"
             className="text-sm font-medium text-gray-600 hover:text-gray-900"
           >
-            카테고리
+            AI 도구
           </Link>
           <Link
             href="/compare"
@@ -31,7 +31,7 @@ export default function Header() {
           </Link>
           <Link
             href="/submit"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            className="rounded-lg bg-purple-600 px-4 py-2 text-sm font-medium text-white hover:bg-purple-700"
           >
             도구 등록
           </Link>

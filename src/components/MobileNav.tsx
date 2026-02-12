@@ -35,11 +35,18 @@ export default function MobileNav() {
               홈
             </Link>
             <Link
+              href="/ideas"
+              onClick={() => setOpen(false)}
+              className="rounded-lg px-3 py-2.5 text-sm font-semibold text-purple-600 hover:bg-purple-50"
+            >
+              아이디어 뱅크
+            </Link>
+            <Link
               href="/category"
               onClick={() => setOpen(false)}
               className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
-              카테고리
+              AI 도구
             </Link>
             <Link
               href="/compare"

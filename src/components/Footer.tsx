@@ -11,8 +11,8 @@ export default function Footer() {
               AI <span className="text-blue-600">AppPro</span>
             </Link>
             <p className="mt-2 text-sm leading-relaxed text-gray-500">
-              소상공인과 중소기업을 위한 AI 도구 가이드. 비즈니스에 필요한 AI
-              서비스를 찾고 비교하세요.
+              매일 새로운 AI SaaS 비즈니스 아이디어. 글로벌 AI 서비스 분석과
+              마이크로 SaaS 기회를 발견하세요.
             </p>
           </div>
 
@@ -24,10 +24,18 @@ export default function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
+                  href="/ideas"
+                  className="text-sm font-medium text-purple-600 hover:text-purple-700"
+                >
+                  아이디어 뱅크
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/category"
                   className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  카테고리
+                  AI 도구
                 </Link>
               </li>
               <li>
