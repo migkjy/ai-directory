@@ -1,11 +1,15 @@
 import { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/db";
+import { getAllIdeaSlugs } from "@/lib/ideas-db";
 import { CATEGORY_CONFIG } from "@/lib/categories";
 import { POPULAR_COMPARISONS, canonicalComparisonSlug } from "@/lib/comparisons";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = "https://ai-directory-seven.vercel.app";
-  const slugs = await getAllSlugs();
+  const [slugs, ideaSlugs] = await Promise.all([
+    getAllSlugs(),
+    getAllIdeaSlugs(),
+  ]);
 
   const toolPages = slugs.map((slug) => ({
     url: `${baseUrl}/tools/${slug}`,
@@ -28,12 +32,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
+  const ideaPages = ideaSlugs.map((slug) => ({
+    url: `${baseUrl}/ideas/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.8,
+  }));
+
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "daily",
       priority: 1,
+    },
+    {
+      url: `${baseUrl}/ideas`,
+      lastModified: new Date(),
+      changeFrequency: "daily",
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/category`,
@@ -53,6 +70,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.5,
     },
+    ...ideaPages,
     ...categoryPages,
     ...comparePages,
     ...toolPages,
