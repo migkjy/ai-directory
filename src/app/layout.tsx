@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import PageTracker from "@/components/PageTracker";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai-directory-seven.vercel.app"),
@@ -50,7 +51,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="AI AppPro - AI 도구 디렉토리"
+          href="/feed.xml"
+        />
+      </head>
       <body className="bg-white text-gray-900 antialiased">
+        <GoogleAnalytics />
         <PageTracker />
         {children}
       </body>
