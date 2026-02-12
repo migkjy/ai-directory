@@ -5,7 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      disallow: ["/api/", "/og"],
     },
-    sitemap: "https://ai-directory.apppro.kr/sitemap.xml",
+    sitemap: "https://ai-directory-seven.vercel.app/sitemap.xml",
   };
 }
