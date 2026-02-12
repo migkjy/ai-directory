@@ -1,5 +1,7 @@
 import Link from "next/link";
-import MobileNav from "@/components/MobileNav";
+import dynamic from "next/dynamic";
+
+const MobileNav = dynamic(() => import("@/components/MobileNav"));
 
 export default function Header() {
   return (

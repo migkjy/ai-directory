@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
+import dynamic from "next/dynamic";
 import "./globals.css";
-import PageTracker from "@/components/PageTracker";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
+
+const PageTracker = dynamic(() => import("@/components/PageTracker"));
+
+const DynamicToaster = dynamic(
+  () => import("sonner").then((mod) => ({ default: mod.Toaster })),
+);
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://ai-directory-seven.vercel.app"),
@@ -73,7 +78,7 @@ export default function RootLayout({
       <body className="bg-white text-gray-900 antialiased">
         <GoogleAnalytics />
         <PageTracker />
-        <Toaster position="top-right" richColors closeButton />
+        <DynamicToaster position="top-right" richColors closeButton />
         {children}
       </body>
     </html>

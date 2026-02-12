@@ -19,6 +19,8 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }));
 }
 
+const BASE_URL = "https://ai-directory-seven.vercel.app";
+
 export async function generateMetadata(props: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
@@ -26,13 +28,34 @@ export async function generateMetadata(props: {
   const idea = await getIdeaBySlug(slug);
   if (!idea) return {};
 
+  const title = `${idea.title} - AI SaaS 아이디어`;
+  const description = idea.summary;
+  const url = `${BASE_URL}/ideas/${slug}`;
+
   return {
-    title: `${idea.title} - AI SaaS 아이디어`,
-    description: idea.summary,
+    title,
+    description,
+    alternates: { canonical: url },
     openGraph: {
       title: idea.title,
-      description: idea.summary,
+      description,
       type: "article",
+      url,
+      siteName: "AI AppPro",
+      publishedTime: idea.published_at,
+      images: [
+        {
+          url: `/og?title=${encodeURIComponent(idea.title)}&description=${encodeURIComponent(idea.summary)}&category=${encodeURIComponent(idea.category)}`,
+          width: 1200,
+          height: 630,
+          alt: idea.title,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: idea.title,
+      description,
     },
   };
 }
@@ -327,8 +350,37 @@ export default async function IdeaDetailPage(props: {
 
   const isPremium = idea.tier === "premium";
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: idea.title,
+    description: idea.summary,
+    datePublished: idea.published_at,
+    author: { "@type": "Organization", name: "AI AppPro" },
+    publisher: { "@type": "Organization", name: "AI AppPro" },
+    mainEntityOfPage: `${BASE_URL}/ideas/${slug}`,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "홈", item: BASE_URL },
+      { "@type": "ListItem", position: 2, name: "아이디어 뱅크", item: `${BASE_URL}/ideas` },
+      { "@type": "ListItem", position: 3, name: idea.title },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <Header />
       <main className="flex-1 bg-gray-50/30">
         {/* Header */}

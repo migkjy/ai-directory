@@ -1,4 +1,5 @@
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { getCategories, searchTools, getToolsPaginated, getToolsCount, getFeaturedTools, getStats } from "@/lib/db";
 import { getLatestIdeas } from "@/lib/ideas-db";
 import Header from "@/components/Header";
@@ -6,8 +7,14 @@ import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
 import SearchBar from "@/components/SearchBar";
 import CategoryGrid from "@/components/CategoryGrid";
-import NewsletterSignup from "@/components/NewsletterSignup";
-import LoadMoreTools from "@/components/LoadMoreTools";
+
+const NewsletterSignup = dynamic(
+  () => import("@/components/NewsletterSignup"),
+);
+
+const LoadMoreTools = dynamic(
+  () => import("@/components/LoadMoreTools"),
+);
 
 export const revalidate = 3600;
 

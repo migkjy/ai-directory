@@ -11,6 +11,31 @@ export const metadata: Metadata = {
   title: "AI 도구 비교 - 어떤 AI가 더 좋을까?",
   description:
     "인기 AI 도구를 나란히 비교하세요. ChatGPT vs Claude, Midjourney vs DALL-E, Cursor vs GitHub Copilot 등 기능, 가격, 장단점을 한눈에.",
+  alternates: {
+    canonical: "https://ai-directory-seven.vercel.app/compare",
+  },
+  openGraph: {
+    title: "AI 도구 비교 - AI AppPro",
+    description:
+      "인기 AI 도구를 나란히 비교하세요. 기능, 가격, 장단점을 한눈에.",
+    type: "website",
+    url: "https://ai-directory-seven.vercel.app/compare",
+    siteName: "AI AppPro",
+    images: [
+      {
+        url: "/og?title=AI+%EB%8F%84%EA%B5%AC+%EB%B9%84%EA%B5%90&description=%EC%9D%B8%EA%B8%B0+AI+%EB%8F%84%EA%B5%AC%EB%A5%BC+%EB%82%98%EB%9E%80%ED%9E%88+%EB%B9%84%EA%B5%90%ED%95%98%EC%84%B8%EC%9A%94",
+        width: 1200,
+        height: 630,
+        alt: "AI 도구 비교",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI 도구 비교 - AI AppPro",
+    description:
+      "인기 AI 도구를 나란히 비교하세요. 기능, 가격, 장단점을 한눈에.",
+  },
 };
 
 const CATEGORY_GROUPS: { title: string; pairs: [string, string][] }[] = [

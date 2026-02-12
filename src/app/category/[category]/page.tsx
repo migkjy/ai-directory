@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { getToolsByCategory } from "@/lib/db";
 import {
   getCategoryLabel,
@@ -16,7 +17,10 @@ import {
 } from "@/lib/comparisons";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import CategoryToolsGrid from "@/components/CategoryToolsGrid";
+
+const CategoryToolsGrid = dynamic(
+  () => import("@/components/CategoryToolsGrid"),
+);
 
 const BASE_URL = "https://ai-directory-seven.vercel.app";
 

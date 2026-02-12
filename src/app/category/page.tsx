@@ -8,6 +8,17 @@ export const metadata: Metadata = {
   title: "AI 도구 카테고리",
   description:
     "글쓰기, 이미지 생성, 코딩, 마케팅 등 카테고리별로 AI 도구를 탐색하세요.",
+  alternates: {
+    canonical: "https://ai-directory-seven.vercel.app/category",
+  },
+  openGraph: {
+    title: "AI 도구 카테고리 - AI AppPro",
+    description:
+      "글쓰기, 이미지 생성, 코딩, 마케팅 등 카테고리별로 AI 도구를 탐색하세요.",
+    type: "website",
+    url: "https://ai-directory-seven.vercel.app/category",
+    siteName: "AI AppPro",
+  },
 };
 
 export const revalidate = 3600;

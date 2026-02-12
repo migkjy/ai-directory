@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { notFound } from "next/navigation";
 import { getToolBySlug, getAllSlugs, getAlternativeTools } from "@/lib/db";
 import {
@@ -11,8 +12,11 @@ import { canonicalComparisonSlug } from "@/lib/comparisons";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ToolCard from "@/components/ToolCard";
-import ShareButtons from "@/components/ShareButtons";
 import { getToolBlogLinks } from "@/lib/blog-links";
+
+const ShareButtons = dynamic(() => import("@/components/ShareButtons"), {
+  loading: () => <div className="h-8" />,
+});
 
 const BASE_URL = "https://ai-directory-seven.vercel.app";
 
@@ -128,11 +132,25 @@ export default async function ToolDetailPage({
       : {}),
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "홈", item: BASE_URL },
+      { "@type": "ListItem", position: 2, name: getCategoryLabel(tool.category), item: `${BASE_URL}/category/${tool.category}` },
+      { "@type": "ListItem", position: 3, name: tool.name },
+    ],
+  };
+
   return (
     <div className="flex min-h-screen flex-col">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <Header />
       <main className="flex-1">
