@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     siteName: "AI AppPro",
     url: "https://ai-directory-seven.vercel.app",
+    images: [
+      {
+        url: "/og?title=AI+AppPro&description=%ED%95%9C%EA%B5%AD+%EC%B5%9C%EA%B3%A0%EC%9D%98+AI+%EB%8F%84%EA%B5%AC+%EB%94%94%EB%A0%89%ED%86%A0%EB%A6%AC",
+        width: 1200,
+        height: 630,
+        alt: "AI AppPro - 한국 최고의 AI 도구 디렉토리",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",

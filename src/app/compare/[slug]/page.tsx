@@ -40,13 +40,30 @@ export async function generateMetadata({
   const title = `${tool1.name} vs ${tool2.name} 비교 - 어떤 AI 도구가 더 좋을까?`;
   const description = `${tool1.name}과 ${tool2.name}의 기능, 가격, 장단점을 비교합니다. 내 비즈니스에 맞는 AI 도구를 찾아보세요.`;
 
+  const url = `https://ai-directory-seven.vercel.app/compare/${slug}`;
   return {
     title,
     description,
+    alternates: { canonical: url },
     openGraph: {
       title: `${tool1.name} vs ${tool2.name} - AI AppPro`,
       description,
       type: "article",
+      url,
+      siteName: "AI AppPro",
+      images: [
+        {
+          url: `/og?title=${encodeURIComponent(`${tool1.name} vs ${tool2.name}`)}&description=${encodeURIComponent(description)}`,
+          width: 1200,
+          height: 630,
+          alt: `${tool1.name} vs ${tool2.name} 비교`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${tool1.name} vs ${tool2.name} - AI AppPro`,
+      description,
     },
   };
 }

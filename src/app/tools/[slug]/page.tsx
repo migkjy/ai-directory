@@ -46,9 +46,17 @@ export async function generateMetadata({
       type: "article",
       url,
       siteName: "AI AppPro",
+      images: [
+        {
+          url: `/og?title=${encodeURIComponent(tool.name)}&description=${encodeURIComponent(tool.short_description || tool.description || "")}&category=${encodeURIComponent(getCategoryLabel(tool.category))}`,
+          width: 1200,
+          height: 630,
+          alt: tool.name,
+        },
+      ],
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title: `${tool.name} - AI AppPro`,
       description: tool.short_description || tool.description,
     },
