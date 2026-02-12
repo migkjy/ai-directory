@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 import ToolCard from "./ToolCard";
 import type { AiTool } from "@/lib/db";
 
@@ -31,9 +32,18 @@ export default function LoadMoreTools({
       });
       if (searchQuery) params.set("q", searchQuery);
       const res = await fetch(`/api/tools?${params}`);
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}`);
+      }
       const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       setTools((prev) => [...prev, ...data.tools]);
       setHasMore(data.hasMore);
+    } catch (error) {
+      console.error("[LoadMoreTools] Failed to load more tools:", error);
+      toast.error("도구를 더 불러오는데 실패했습니다. 다시 시도해주세요.");
     } finally {
       setLoading(false);
     }

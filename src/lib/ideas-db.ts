@@ -75,41 +75,66 @@ export interface AiIdea {
 }
 
 export async function getLatestIdeas(limit: number = 10): Promise<AiIdea[]> {
-  const { rows } = await pool.query(
-    "SELECT * FROM ai_ideas WHERE published = true ORDER BY published_at DESC LIMIT $1",
-    [limit]
-  );
-  return rows;
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM ai_ideas WHERE published = true ORDER BY published_at DESC LIMIT $1",
+      [limit]
+    );
+    return rows;
+  } catch (error) {
+    console.error("[DB] getLatestIdeas failed:", { limit, error });
+    throw error;
+  }
 }
 
 export async function getIdeaBySlug(slug: string): Promise<AiIdea | null> {
-  const { rows } = await pool.query(
-    "SELECT * FROM ai_ideas WHERE slug = $1 AND published = true",
-    [slug]
-  );
-  return rows[0] || null;
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM ai_ideas WHERE slug = $1 AND published = true",
+      [slug]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    console.error("[DB] getIdeaBySlug failed:", { slug, error });
+    throw error;
+  }
 }
 
 export async function getAllIdeaSlugs(): Promise<string[]> {
-  const { rows } = await pool.query(
-    "SELECT slug FROM ai_ideas WHERE published = true ORDER BY published_at DESC"
-  );
-  return rows.map((r: { slug: string }) => r.slug);
+  try {
+    const { rows } = await pool.query(
+      "SELECT slug FROM ai_ideas WHERE published = true ORDER BY published_at DESC"
+    );
+    return rows.map((r: { slug: string }) => r.slug);
+  } catch (error) {
+    console.error("[DB] getAllIdeaSlugs failed:", error);
+    throw error;
+  }
 }
 
 export async function getIdeaCategories(): Promise<
   { category: string; count: number }[]
 > {
-  const { rows } = await pool.query(
-    "SELECT category, COUNT(*)::int as count FROM ai_ideas WHERE published = true GROUP BY category ORDER BY count DESC"
-  );
-  return rows;
+  try {
+    const { rows } = await pool.query(
+      "SELECT category, COUNT(*)::int as count FROM ai_ideas WHERE published = true GROUP BY category ORDER BY count DESC"
+    );
+    return rows;
+  } catch (error) {
+    console.error("[DB] getIdeaCategories failed:", error);
+    throw error;
+  }
 }
 
 export async function getIdeasByCategory(category: string): Promise<AiIdea[]> {
-  const { rows } = await pool.query(
-    "SELECT * FROM ai_ideas WHERE category = $1 AND published = true ORDER BY published_at DESC",
-    [category]
-  );
-  return rows;
+  try {
+    const { rows } = await pool.query(
+      "SELECT * FROM ai_ideas WHERE category = $1 AND published = true ORDER BY published_at DESC",
+      [category]
+    );
+    return rows;
+  } catch (error) {
+    console.error("[DB] getIdeasByCategory failed:", { category, error });
+    throw error;
+  }
 }

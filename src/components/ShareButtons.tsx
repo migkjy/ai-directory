@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function ShareButtons({
   url,
@@ -14,15 +15,22 @@ export default function ShareButtons({
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
+      setCopied(true);
+      toast.success("링크가 복사되었습니다.");
     } catch {
-      const textarea = document.createElement("textarea");
-      textarea.value = url;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      document.body.removeChild(textarea);
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = url;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setCopied(true);
+        toast.success("링크가 복사되었습니다.");
+      } catch {
+        toast.error("링크 복사에 실패했습니다.");
+      }
     }
-    setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
