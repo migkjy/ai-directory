@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "crawl": "tsx --env-file=.env.local scripts/crawl.ts"
+    "crawl": "tsx --env-file=.env.local scripts/crawl.ts",
+    "generate-report": "tsx --env-file=.env.local scripts/generate-report.ts"
   },
   "dependencies": {
     "@eslint/compat": "^2.0.2",

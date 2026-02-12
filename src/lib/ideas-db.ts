@@ -4,6 +4,40 @@ const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
 
+export interface SourceLink {
+  title: string;
+  url: string;
+  type: string; // "article" | "service" | "report" | "data"
+}
+
+export interface OverseasCase {
+  name: string;
+  url: string;
+  description: string;
+  metrics: string;
+}
+
+export interface Feasibility {
+  score: number; // 1-10
+  timeline: string;
+  team_size: string;
+  tech_complexity: string;
+  notes: string;
+}
+
+export interface TokenCost {
+  input_tokens: number;
+  output_tokens: number;
+  model: string;
+  estimated_cost_usd: number;
+}
+
+export interface ReportImage {
+  url: string;
+  alt: string;
+  type: string; // "og" | "chart" | "screenshot" | "diagram"
+}
+
 export interface AiIdea {
   id: string;
   slug: string;
@@ -27,6 +61,17 @@ export interface AiIdea {
   published: boolean;
   published_at: string;
   created_at: string;
+  // v2 premium fields
+  tier: "premium" | "lite";
+  overseas_cases: OverseasCase[];
+  korea_localization: string | null;
+  risk_analysis: string | null;
+  feasibility: Feasibility | null;
+  customer_analysis: string | null;
+  source_links: SourceLink[];
+  images: ReportImage[];
+  token_cost: TokenCost | null;
+  profitability_analysis: string | null;
 }
 
 export async function getLatestIdeas(limit: number = 10): Promise<AiIdea[]> {

@@ -19,6 +19,9 @@ export default async function IdeasPage() {
     getIdeaCategories(),
   ]);
 
+  const premiumCount = ideas.filter((i) => i.tier === "premium").length;
+  const liteCount = ideas.filter((i) => i.tier !== "premium").length;
+
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -36,24 +39,32 @@ export default async function IdeasPage() {
           </div>
         </section>
 
-        {/* Category Filter */}
-        {categories.length > 0 && (
-          <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
-            <div className="flex flex-wrap gap-2">
-              <span className="rounded-full bg-purple-600 px-4 py-1.5 text-sm font-medium text-white">
-                전체 ({ideas.length})
+        {/* Tier + Category Filter */}
+        <section className="mx-auto max-w-7xl px-4 pt-8 sm:px-6">
+          <div className="flex flex-wrap gap-2">
+            <span className="rounded-full bg-purple-600 px-4 py-1.5 text-sm font-medium text-white">
+              전체 ({ideas.length})
+            </span>
+            {premiumCount > 0 && (
+              <span className="rounded-full bg-amber-100 px-4 py-1.5 text-sm font-medium text-amber-800">
+                Premium ({premiumCount})
               </span>
-              {categories.map((cat) => (
-                <span
-                  key={cat.category}
-                  className="rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-sm text-gray-600"
-                >
-                  {cat.category} ({cat.count})
-                </span>
-              ))}
-            </div>
-          </section>
-        )}
+            )}
+            {liteCount > 0 && (
+              <span className="rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-sm text-gray-600">
+                Lite ({liteCount})
+              </span>
+            )}
+            {categories.map((cat) => (
+              <span
+                key={cat.category}
+                className="rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 text-sm text-gray-600"
+              >
+                {cat.category} ({cat.count})
+              </span>
+            ))}
+          </div>
+        </section>
 
         {/* Ideas Grid */}
         <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
@@ -73,6 +84,15 @@ export default async function IdeasPage() {
                 <Link key={idea.id} href={`/ideas/${idea.slug}`}>
                   <article className="group flex h-full flex-col rounded-xl border border-gray-200 bg-white p-6 transition-all hover:border-purple-300 hover:shadow-lg">
                     <div className="mb-3 flex flex-wrap items-center gap-2">
+                      {idea.tier === "premium" ? (
+                        <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-bold text-amber-800">
+                          Premium
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                          Lite
+                        </span>
+                      )}
                       <span className="rounded-full bg-purple-100 px-2.5 py-0.5 text-xs font-medium text-purple-700">
                         {idea.category}
                       </span>
@@ -93,6 +113,19 @@ export default async function IdeasPage() {
                     <p className="mb-4 flex-1 text-sm leading-relaxed text-gray-500">
                       {idea.summary}
                     </p>
+                    {idea.tier === "premium" && idea.feasibility && (
+                      <div className="mb-3 flex items-center gap-2 text-xs">
+                        <span className="rounded bg-green-100 px-2 py-0.5 font-medium text-green-700">
+                          실현 가능성 {idea.feasibility.score}/10
+                        </span>
+                        {idea.overseas_cases &&
+                          idea.overseas_cases.length > 0 && (
+                            <span className="rounded bg-indigo-100 px-2 py-0.5 font-medium text-indigo-700">
+                              해외 사례 {idea.overseas_cases.length}건
+                            </span>
+                          )}
+                      </div>
+                    )}
                     <div className="flex items-center justify-between border-t border-gray-100 pt-3 text-xs text-gray-400">
                       <span>{idea.revenue_model}</span>
                       <span>
