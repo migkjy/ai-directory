@@ -5,24 +5,25 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const BASE_URL = "https://ai-directory-seven.vercel.app";
 
 export async function GET() {
-  const { rows } = await pool.query(
-    `SELECT name, slug, short_description, description, category, created_at
-     FROM ai_tools
-     WHERE published = true
-     ORDER BY created_at DESC
-     LIMIT 20`
-  );
+  try {
+    const { rows } = await pool.query(
+      `SELECT name, slug, short_description, description, category, created_at
+       FROM ai_tools
+       WHERE published = true
+       ORDER BY created_at DESC
+       LIMIT 20`
+    );
 
-  const items = rows
-    .map(
-      (tool: {
-        name: string;
-        slug: string;
-        short_description: string | null;
-        description: string;
-        category: string;
-        created_at: string;
-      }) => `    <item>
+    const items = rows
+      .map(
+        (tool: {
+          name: string;
+          slug: string;
+          short_description: string | null;
+          description: string;
+          category: string;
+          created_at: string;
+        }) => `    <item>
       <title><![CDATA[${tool.name}]]></title>
       <link>${BASE_URL}/tools/${tool.slug}</link>
       <description><![CDATA[${tool.short_description || tool.description}]]></description>
@@ -30,10 +31,10 @@ export async function GET() {
       <pubDate>${new Date(tool.created_at).toUTCString()}</pubDate>
       <guid>${BASE_URL}/tools/${tool.slug}</guid>
     </item>`
-    )
-    .join("\n");
+      )
+      .join("\n");
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>AI AppPro - AI 도구 디렉토리</title>
@@ -46,10 +47,23 @@ ${items}
   </channel>
 </rss>`;
 
-  return new Response(xml, {
-    headers: {
-      "Content-Type": "application/rss+xml; charset=utf-8",
-      "Cache-Control": "s-maxage=3600, stale-while-revalidate",
-    },
-  });
+    return new Response(xml, {
+      headers: {
+        "Content-Type": "application/rss+xml; charset=utf-8",
+        "Cache-Control": "s-maxage=3600, stale-while-revalidate",
+      },
+    });
+  } catch (error) {
+    console.error("[RSS] feed.xml generation failed:", error);
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0"><channel>
+  <title>AI AppPro</title>
+  <link>${BASE_URL}</link>
+  <description>Feed temporarily unavailable</description>
+</channel></rss>`;
+    return new Response(xml, {
+      status: 500,
+      headers: { "Content-Type": "application/rss+xml; charset=utf-8" },
+    });
+  }
 }
